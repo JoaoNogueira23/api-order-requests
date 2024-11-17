@@ -1,5 +1,5 @@
 # Use uma imagem base do Go
-FROM golang:1.20
+FROM golang:1.23.1
 
 # Defina o diretório de trabalho dentro do contêiner
 WORKDIR /app
@@ -11,10 +11,10 @@ COPY . .
 RUN go mod tidy
 
 # Construa o binário
-RUN go build -o main .
+RUN go build -o .cmd/main ./cmd
 
 # Exponha a porta usada pela aplicação
-EXPOSE 8000
+EXPOSE 8080
 
 # Comando para rodar a aplicação
-CMD ["./main"]
+CMD [".cmd/main"]
