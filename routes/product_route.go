@@ -8,7 +8,11 @@ import (
 
 // DefineProductRoutes configura as rotas de produtos
 func DefineProductRoute(router *gin.Engine, productController *controller.ProductController) {
-	router.GET("/products", productController.GetProducts)
-	router.POST("/product", productController.CreateProduct)
-	router.GET("/product/:productId", productController.GetProductById)
+	v1 := router.Group("/api/v1")
+
+	{
+		v1.GET("/products", productController.GetProducts)
+		v1.POST("/create-product", productController.CreateProduct)
+		v1.GET("/product/:productId", productController.GetProductById)
+	}
 }
