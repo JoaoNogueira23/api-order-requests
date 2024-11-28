@@ -55,7 +55,7 @@ func (pr *ProductRepository) GetProducts() ([]model.Products, error) {
 func (pr *ProductRepository) CreateProduct(product model.Products) (int, error) {
 
 	var id int
-	query, err := pr.connection.Prepare("INSERT INTO product" +
+	query, err := pr.connection.Prepare("INSERT INTO products" +
 		"(product_name, price, volume, describe)" +
 		" VALUES ($1, $2, $3, $4) RETURNING id")
 	if err != nil {

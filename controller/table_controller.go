@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"api-blog-go/model"
 	"api-blog-go/usecase"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,4 +27,23 @@ func (t *TableController) GetTables(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, tables)
+}
+
+func (t *TableController) CreateTable(ctx *gin.Context) {
+	var table model.Table
+	err := ctx.BindJSON(&table)
+
+	if err != nil {
+		fmt.Println(err)
+		ctx.JSON(http.StatusBadRequest, err)
+	}
+
+	insertedTable, err := t.tableUsecase.CreateTable(table)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, insertedTable)
+
 }
