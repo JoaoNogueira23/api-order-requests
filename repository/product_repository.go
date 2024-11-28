@@ -16,29 +16,32 @@ func NewProductRepository(connection *sql.DB) ProductRepository {
 	}
 }
 
-func (pr *ProductRepository) GetProducts() ([]model.Product, error) {
+func (pr *ProductRepository) GetProducts() ([]model.Products, error) {
 
-	query := "SELECT id, product_name, price, describe, volume FROM product"
+	query := "SELECT id_product, name, price, description, volume, isactive, ispromotion, discount FROM products"
 	rows, err := pr.connection.Query(query)
 	if err != nil {
 		fmt.Println(err)
-		return []model.Product{}, err
+		return []model.Products{}, err
 	}
 
-	var productList []model.Product
-	var productObj model.Product
+	var productList []model.Products
+	var productObj model.Products
 
 	for rows.Next() {
 		err = rows.Scan(
 			&productObj.ID,
 			&productObj.Name,
 			&productObj.Price,
+			&productObj.Describe,
 			&productObj.Volume,
-			&productObj.Describe)
+			&productObj.Isactive,
+			&productObj.Ispromotion,
+			&productObj.Discount)
 
 		if err != nil {
 			fmt.Println(err)
-			return []model.Product{}, err
+			return []model.Products{}, err
 		}
 
 		productList = append(productList, productObj)
@@ -49,7 +52,7 @@ func (pr *ProductRepository) GetProducts() ([]model.Product, error) {
 	return productList, nil
 }
 
-func (pr *ProductRepository) CreateProduct(product model.Product) (int, error) {
+func (pr *ProductRepository) CreateProduct(product model.Products) (int, error) {
 
 	var id int
 	query, err := pr.connection.Prepare("INSERT INTO product" +
@@ -70,7 +73,7 @@ func (pr *ProductRepository) CreateProduct(product model.Product) (int, error) {
 	return id, nil
 }
 
-func (pr *ProductRepository) GetProductById(id_product int) (*model.Product, error) {
+func (pr *ProductRepository) GetProductById(id_product int) (*model.Products, error) {
 
 	query, err := pr.connection.Prepare("SELECT * FROM product WHERE id = $1")
 	if err != nil {
@@ -78,7 +81,7 @@ func (pr *ProductRepository) GetProductById(id_product int) (*model.Product, err
 		return nil, err
 	}
 
-	var produto model.Product
+	var produto model.Products
 
 	err = query.QueryRow(id_product).Scan(
 		&produto.ID,

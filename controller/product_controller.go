@@ -32,7 +32,7 @@ func (p *ProductController) GetProducts(ctx *gin.Context) {
 
 func (p *ProductController) CreateProduct(ctx *gin.Context) {
 
-	var product model.Product
+	var product model.Products
 	err := ctx.BindJSON(&product)
 
 	if err != nil {
