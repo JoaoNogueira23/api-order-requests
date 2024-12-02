@@ -27,7 +27,7 @@ func (ou *OrderUsecase) CreateSection(id_table int) (int, error) {
 	return tableId, nil
 }
 
-func (ou *OrderUsecase) createOrder(productsList []model.ProductsRequestOrder, id_section string) (int, error) {
+func (ou *OrderUsecase) CreateOrder(productsList []model.ProductsRequestOrder, id_section string) (int, error) {
 	// IMPLEMENTE
 	orderId, err := ou.repository.CreateOrder(id_section)
 

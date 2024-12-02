@@ -19,3 +19,9 @@ type ProductsRequestOrder struct {
 	Quantity   int     `json:"quantity"`
 	TotalPrice float32 `json:"total_price"`
 }
+
+// model to requests new products on table
+type OrderCreateRq struct {
+	ProductsList []ProductsRequestOrder `json:"products_list"`
+	IdSection    string                 `json:"id_section"`
+}
