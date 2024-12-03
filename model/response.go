@@ -12,3 +12,7 @@ type OrderCreateSectionRq struct {
 type GetOrdersRq struct {
 	IdTable int `json:"id_table"`
 }
+
+type PayloadOrderItens struct {
+	IdOrder string `json:"id_order"`
+}

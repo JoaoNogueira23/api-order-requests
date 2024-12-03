@@ -164,7 +164,7 @@ func (or *OrderRepository) GetOrders(id_table int) ([]model.Order, error) {
 	return ordersList, nil
 }
 
-func (or *OrderRepository) GetOrderItens(id_order string) ([]model.Order, error) {
+func (or *OrderRepository) GetOrderItens(id_order string) ([]model.OrderItemRq, error) {
 	query := `SELECT
 			SUM(total_price) as total_price,
 			SUM(quantity) as quantity,
@@ -184,8 +184,8 @@ func (or *OrderRepository) GetOrderItens(id_order string) ([]model.Order, error)
 
 	defer rows.Close()
 
-	var ordersList []model.Order
-	var orderObj model.Order
+	var ordersList []model.OrderItemRq
+	var orderObj model.OrderItemRq
 
 	if !rows.Next() {
 		return nil, fmt.Errorf("Section not found!")
@@ -193,10 +193,9 @@ func (or *OrderRepository) GetOrderItens(id_order string) ([]model.Order, error)
 
 	for rows.Next() {
 		err = rows.Scan(
-			&orderObj.IdOrder,
-			&orderObj.IdSection,
-			&orderObj.OrderTime,
-			&orderObj.Status)
+			&orderObj.Total_price,
+			&orderObj.Quantity,
+			&orderObj.ProductName)
 
 		if err != nil {
 			return nil, err

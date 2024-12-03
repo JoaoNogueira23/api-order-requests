@@ -70,4 +70,30 @@ func (o *OrderController) GetOrders(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, err)
 	}
 
+	orders, err := o.orderUsecase.GetOrders(payload.IdTable)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
+	}
+
+	ctx.JSON(http.StatusOK, orders)
+
+}
+
+func (o *OrderController) GetOrderItems(ctx *gin.Context) {
+	var payload model.PayloadOrderItens
+	err := ctx.BindJSON(&payload)
+
+	if err != nil {
+		fmt.Println(err)
+		ctx.JSON(http.StatusBadRequest, err)
+	}
+
+	orderItens, err := o.orderUsecase.GetOrderItems(payload.IdOrder)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
+	}
+
+	ctx.JSON(http.StatusOK, orderItens)
 }

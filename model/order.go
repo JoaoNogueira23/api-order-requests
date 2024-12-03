@@ -25,3 +25,11 @@ type OrderItem struct {
 	UnityPrice  float32 `json:"unit_price"`
 	TotalPrice  float32 `json:"total_price"`
 }
+
+// order item request
+
+type OrderItemRq struct {
+	Total_price float32 `json:"total_price"`
+	Quantity    int     `json:"quantity"`
+	ProductName string  `json:"product_name"`
+}

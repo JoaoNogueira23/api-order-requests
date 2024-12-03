@@ -45,3 +45,11 @@ func (ou *OrderUsecase) CreateOrder(productsList []model.ProductsRequestOrder, i
 
 	return rowsEffected, nil
 }
+
+func (ou *OrderUsecase) GetOrders(id_table int) ([]model.Order, error) {
+	return ou.repository.GetOrders(id_table)
+}
+
+func (ou *OrderUsecase) GetOrderItems(id_order string) ([]model.OrderItemRq, error) {
+	return ou.repository.GetOrderItens(id_order)
+}
