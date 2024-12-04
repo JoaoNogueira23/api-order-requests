@@ -10,8 +10,8 @@ import (
 const (
 	host     = "localhost"
 	port     = 5432
-	user     = "1234"
-	password = "admin"
+	user     = "admin"
+	password = "1234"
 	dbname   = "db_orders"
 )
 

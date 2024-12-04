@@ -66,3 +66,32 @@ func (tr *TableRepository) CreateTable(table model.Table) (int, error) {
 	return id, nil
 
 }
+
+func (tr *TableRepository) GetTableById(id_table int) (*model.Table, error) {
+	query, err := tr.conn.Prepare("SELECT * FROM tables WHERE id_table = $1")
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	var table model.Table
+
+	err = query.QueryRow(id_table).Scan(
+		&table.ID,
+		&table.Table_number,
+		&table.IsOccupied,
+		&table.Location)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// table nopt found
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	query.Close()
+	return &table, nil
+}

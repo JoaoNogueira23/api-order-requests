@@ -13,5 +13,6 @@ func DefineTableRoute(router *gin.Engine, tableController *controller.TableContr
 	{
 		v1.GET("/tables", tableController.GetTables)
 		v1.POST("/create-table", tableController.CreateTable)
+		v1.GET("/table/:tableId", tableController.GetTableById)
 	}
 }

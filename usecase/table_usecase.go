@@ -33,3 +33,13 @@ func (tu *TableUsecase) CreateTable(table model.Table) (model.Table, error) {
 	return table, nil
 
 }
+
+func (tu *TableUsecase) GetTableById(id_table int) (*model.Table, error) {
+	table, err := tu.repository.GetTableById(id_table)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return table, nil
+}

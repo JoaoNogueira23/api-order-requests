@@ -5,6 +5,7 @@ import (
 	"api-blog-go/usecase"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -45,5 +46,41 @@ func (t *TableController) CreateTable(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, insertedTable)
+
+}
+
+func (t *TableController) GetTableById(ctx *gin.Context) {
+	id := ctx.Param("tableId")
+
+	if id == "" {
+		reponse := model.Response{
+			Message: "Id cannot null!",
+		}
+
+		ctx.JSON(http.StatusBadRequest, reponse)
+		return
+	}
+
+	tableId, err := strconv.Atoi(id)
+
+	if err != nil {
+		response := model.Response{
+			Message: "Table id must be a number!",
+		}
+
+		ctx.JSON(http.StatusNotFound, response)
+	}
+
+	table, err := t.tableUsecase.GetTableById(tableId)
+
+	if table == nil {
+		response := model.Response{
+			Message: "Table not found!",
+		}
+
+		ctx.JSON(http.StatusNotFound, response)
+	}
+
+	ctx.JSON(http.StatusOK, table)
 
 }
