@@ -16,12 +16,12 @@ func NewOrderUsecase(repo repository.OrderRepository) OrderUsecase {
 	}
 }
 
-func (ou *OrderUsecase) CreateSection(id_table int) (int, error) {
+func (ou *OrderUsecase) CreateSection(id_table string) (string, error) {
 	tableId, err := ou.repository.CreateSection(id_table)
 
 	if err != nil {
 		fmt.Println(err)
-		return -1, err
+		return "", err
 	}
 
 	return tableId, nil

@@ -61,17 +61,21 @@ func (t *TableController) GetTableById(ctx *gin.Context) {
 		return
 	}
 
-	tableId, err := strconv.Atoi(id)
+	idTable, err := strconv.Atoi(id)
 
 	if err != nil {
 		response := model.Response{
-			Message: "Table id must be a number!",
+			Message: "ID must be a number",
 		}
 
-		ctx.JSON(http.StatusNotFound, response)
+		ctx.JSON(http.StatusBadRequest, response)
 	}
 
-	table, err := t.tableUsecase.GetTableById(tableId)
+	table, err := t.tableUsecase.GetTableById(idTable)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
+	}
 
 	if table == nil {
 		response := model.Response{

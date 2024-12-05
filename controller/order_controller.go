@@ -5,6 +5,7 @@ import (
 	"api-blog-go/usecase"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -62,15 +63,26 @@ func (o *OrderController) CreateOrder(ctx *gin.Context) {
 }
 
 func (o *OrderController) GetOrders(ctx *gin.Context) {
-	var payload model.GetOrdersRq
-	err := ctx.BindJSON(&payload)
+	id := ctx.Param("id_table")
 
-	if err != nil {
-		fmt.Println(err)
-		ctx.JSON(http.StatusBadRequest, err)
+	if id == "" {
+		response := model.Response{
+			Message: "The id of table do not null",
+		}
+		ctx.JSON(http.StatusBadRequest, response)
 	}
 
-	orders, err := o.orderUsecase.GetOrders(payload.IdTable)
+	idTable, err := strconv.Atoi(id)
+
+	if err != nil {
+		response := model.Response{
+			Message: "ID must be a number",
+		}
+
+		ctx.JSON(http.StatusBadRequest, response)
+	}
+
+	orders, err := o.orderUsecase.GetOrders(idTable)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)

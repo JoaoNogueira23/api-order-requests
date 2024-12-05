@@ -6,11 +6,11 @@ type Response struct {
 
 // orders
 type OrderCreateSectionRq struct {
-	IdTable int `json:"id_table"`
+	IdTable string `json:"id_table"`
 }
 
 type GetOrdersRq struct {
-	IdTable int `json:"id_table"`
+	IdTable string `json:"id_table"`
 }
 
 type PayloadOrderItens struct {

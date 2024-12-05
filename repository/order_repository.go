@@ -21,7 +21,7 @@ func NewOrderRepository(conn *sql.DB) OrderRepository {
 	}
 }
 
-func (or *OrderRepository) CreateSection(id_table int) (int, error) {
+func (or *OrderRepository) CreateSection(id_table string) (string, error) {
 	var id string
 	location, err := time.LoadLocation("America/Sao_Paulo")
 	// Gera o datetime atual na região de São Paulo
@@ -33,7 +33,7 @@ func (or *OrderRepository) CreateSection(id_table int) (int, error) {
 
 	if err != nil {
 		fmt.Println(err)
-		return -1, err
+		return "", err
 	}
 	// variables
 	// Define o seed para o gerador de números aleatórios
@@ -46,7 +46,7 @@ func (or *OrderRepository) CreateSection(id_table int) (int, error) {
 
 	if err != nil {
 		fmt.Println(err)
-		return -1, err
+		return "", err
 	}
 
 	query.Close()
@@ -128,10 +128,16 @@ func (or *OrderRepository) CreateOrderItem(id_order string, productsList []model
 }
 
 func (or *OrderRepository) GetOrders(id_table int) ([]model.Order, error) {
-	query := "SELECT id_order, ORD.id_section, order_time, ORD.status FROM orders ORD " +
-		"LEFT JOIN sections SEC" +
-		"ON SEC.id_section = ORD.id_section" +
-		"WHERE ORD.id_table = $1"
+	query := `
+		SELECT 
+			id_order, 
+			ORD.id_section, 
+			order_time,
+			ORD.status
+		FROM sections SEC
+		LEFT JOIN orders ORD
+		ON SEC.id_section = ORD.id_section
+		WHERE SEC.id_table = $1`
 	rows, err := or.conn.Query(query, id_table)
 	if err != nil {
 		fmt.Println(err)

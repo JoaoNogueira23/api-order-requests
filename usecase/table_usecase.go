@@ -20,17 +20,15 @@ func (tu *TableUsecase) GetTables() ([]model.Table, error) {
 	return tu.repository.GetTables()
 }
 
-func (tu *TableUsecase) CreateTable(table model.Table) (model.Table, error) {
+func (tu *TableUsecase) CreateTable(table model.Table) (string, error) {
 
 	tableId, err := tu.repository.CreateTable(table)
 	if err != nil {
 		fmt.Println(err)
-		return model.Table{}, err
+		return "", err
 	}
 
-	table.ID = tableId
-
-	return table, nil
+	return tableId, nil
 
 }
 

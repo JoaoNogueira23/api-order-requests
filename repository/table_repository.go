@@ -17,7 +17,7 @@ func NewTableRepository(conn *sql.DB) TableRepository {
 }
 
 func (pr *TableRepository) GetTables() ([]model.Table, error) {
-	query := "SELECT id_table, table_number, isOccupied, location FROM tables;"
+	query := "SELECT id_table, table_number, isoccupied, location FROM tables;"
 	rows, err := pr.conn.Query(query)
 	if err != nil {
 		fmt.Println(err)
@@ -46,20 +46,20 @@ func (pr *TableRepository) GetTables() ([]model.Table, error) {
 	return tablesList, nil
 }
 
-func (tr *TableRepository) CreateTable(table model.Table) (int, error) {
-	var id int
+func (tr *TableRepository) CreateTable(table model.Table) (string, error) {
+	var id string
 	query, err := tr.conn.Prepare("INSERT INTO tables" +
 		"(table_number, location)" +
 		"VALUES ($1, $2) RETURNING id_table")
 	if err != nil {
 		fmt.Println(err)
-		return 0, err
+		return "", err
 	}
 
 	err = query.QueryRow(table.Table_number, table.Location).Scan(&id)
 	if err != nil {
 		fmt.Println(err)
-		return 0, err
+		return "", err
 	}
 
 	query.Close()

@@ -4,7 +4,7 @@ import "time"
 
 type Section struct {
 	IdSection string    `json:"id_section"`
-	IdTable   int       `json:"id_table"`
+	IdTable   string    `json:"id_table"`
 	StartTime time.Time `json:"start_time"`
 	EndTime   time.Time `json:"end_time"`
 	Status    string    `json:"status"`
