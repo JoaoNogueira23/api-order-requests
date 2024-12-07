@@ -4,6 +4,10 @@ import (
 	"api-blog-go/model"
 	"database/sql"
 	"fmt"
+	"math/rand"
+	"time"
+
+	"github.com/oklog/ulid/v2"
 )
 
 type TableRepository struct {
@@ -48,15 +52,22 @@ func (pr *TableRepository) GetTables() ([]model.Table, error) {
 
 func (tr *TableRepository) CreateTable(table model.Table) (string, error) {
 	var id string
+	// variables
+	// Define o seed para o gerador de números aleatórios
+	entropy := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	// Gera um ULID (ordenado lexicograficamente)
+	id = ulid.MustNew(ulid.Timestamp(time.Now()), entropy).String()
+
 	query, err := tr.conn.Prepare("INSERT INTO tables" +
-		"(table_number, location)" +
-		"VALUES ($1, $2) RETURNING id_table")
+		"(id_table, table_number, location)" +
+		"VALUES ($1,$2, $3) RETURNING id_table")
 	if err != nil {
 		fmt.Println(err)
 		return "", err
 	}
 
-	err = query.QueryRow(table.Table_number, table.Location).Scan(&id)
+	err = query.QueryRow(id, table.Table_number, table.Location).Scan(&id)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
@@ -67,7 +78,7 @@ func (tr *TableRepository) CreateTable(table model.Table) (string, error) {
 
 }
 
-func (tr *TableRepository) GetTableById(id_table int) (*model.Table, error) {
+func (tr *TableRepository) GetTableById(id_table string) (*model.Table, error) {
 	query, err := tr.conn.Prepare("SELECT * FROM tables WHERE id_table = $1")
 
 	if err != nil {

@@ -46,7 +46,7 @@ func (ou *OrderUsecase) CreateOrder(productsList []model.ProductsRequestOrder, i
 	return rowsEffected, nil
 }
 
-func (ou *OrderUsecase) GetOrders(id_table int) ([]model.Order, error) {
+func (ou *OrderUsecase) GetOrders(id_table string) ([]model.Order, error) {
 	return ou.repository.GetOrders(id_table)
 }
 

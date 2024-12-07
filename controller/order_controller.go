@@ -5,7 +5,6 @@ import (
 	"api-blog-go/usecase"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -72,17 +71,7 @@ func (o *OrderController) GetOrders(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, response)
 	}
 
-	idTable, err := strconv.Atoi(id)
-
-	if err != nil {
-		response := model.Response{
-			Message: "ID must be a number",
-		}
-
-		ctx.JSON(http.StatusBadRequest, response)
-	}
-
-	orders, err := o.orderUsecase.GetOrders(idTable)
+	orders, err := o.orderUsecase.GetOrders(id)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)

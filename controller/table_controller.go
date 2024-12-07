@@ -5,7 +5,6 @@ import (
 	"api-blog-go/usecase"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -61,17 +60,7 @@ func (t *TableController) GetTableById(ctx *gin.Context) {
 		return
 	}
 
-	idTable, err := strconv.Atoi(id)
-
-	if err != nil {
-		response := model.Response{
-			Message: "ID must be a number",
-		}
-
-		ctx.JSON(http.StatusBadRequest, response)
-	}
-
-	table, err := t.tableUsecase.GetTableById(idTable)
+	table, err := t.tableUsecase.GetTableById(id)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)

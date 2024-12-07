@@ -127,7 +127,7 @@ func (or *OrderRepository) CreateOrderItem(id_order string, productsList []model
 	return int(rowsEffected), nil
 }
 
-func (or *OrderRepository) GetOrders(id_table int) ([]model.Order, error) {
+func (or *OrderRepository) GetOrders(id_table string) ([]model.Order, error) {
 	query := `
 		SELECT 
 			id_order, 

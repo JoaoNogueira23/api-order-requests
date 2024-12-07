@@ -32,7 +32,7 @@ func (tu *TableUsecase) CreateTable(table model.Table) (string, error) {
 
 }
 
-func (tu *TableUsecase) GetTableById(id_table int) (*model.Table, error) {
+func (tu *TableUsecase) GetTableById(id_table string) (*model.Table, error) {
 	table, err := tu.repository.GetTableById(id_table)
 
 	if err != nil {
