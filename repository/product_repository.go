@@ -86,9 +86,9 @@ func (pr *ProductRepository) CreateProduct(product model.Products) (string, erro
 	return id, nil
 }
 
-func (pr *ProductRepository) GetProductById(id_product int) (*model.Products, error) {
+func (pr *ProductRepository) GetProductById(id_product string) (*model.Products, error) {
 
-	query, err := pr.connection.Prepare("SELECT * FROM product WHERE id = $1")
+	query, err := pr.connection.Prepare("SELECT * FROM products WHERE id_product = $1")
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -99,10 +99,12 @@ func (pr *ProductRepository) GetProductById(id_product int) (*model.Products, er
 	err = query.QueryRow(id_product).Scan(
 		&produto.ID,
 		&produto.Name,
+		&produto.Describe,
 		&produto.Price,
 		&produto.Volume,
-		&produto.Describe,
-	)
+		&produto.Isactive,
+		&produto.Ispromotion,
+		&produto.Discount)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
