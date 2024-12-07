@@ -4,6 +4,10 @@ import (
 	"api-blog-go/model"
 	"database/sql"
 	"fmt"
+	"math/rand"
+	"time"
+
+	"github.com/oklog/ulid/v2"
 )
 
 type ProductRepository struct {
@@ -52,21 +56,30 @@ func (pr *ProductRepository) GetProducts() ([]model.Products, error) {
 	return productList, nil
 }
 
-func (pr *ProductRepository) CreateProduct(product model.Products) (int, error) {
+func (pr *ProductRepository) CreateProduct(product model.Products) (string, error) {
 
-	var id int
+	var id string
+
+	// variables
+	// Define o seed para o gerador de números aleatórios
+	entropy := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	// Gera um ULID (ordenado lexicograficamente)
+	id = ulid.MustNew(ulid.Timestamp(time.Now()), entropy).String()
+
 	query, err := pr.connection.Prepare("INSERT INTO products" +
-		"(product_name, price, volume, describe)" +
-		" VALUES ($1, $2, $3, $4) RETURNING id")
+		"(id_product,name, price, volume, description)" +
+		" VALUES ($1, $2, $3, $4, $5) RETURNING id_product")
+
 	if err != nil {
 		fmt.Println(err)
-		return 0, err
+		return "", err
 	}
 
-	err = query.QueryRow(product.Name, product.Price, product.Volume, product.Describe).Scan(&id)
+	err = query.QueryRow(id, product.Name, product.Price, product.Volume, product.Describe).Scan(&id)
 	if err != nil {
 		fmt.Println(err)
-		return 0, err
+		return "", err
 	}
 
 	query.Close()
