@@ -4,6 +4,7 @@ import (
 	"api-blog-go/model"
 	"api-blog-go/usecase"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,13 +21,45 @@ func NewProductController(usecase usecase.ProductUsecase) ProductController {
 
 func (p *ProductController) GetProducts(ctx *gin.Context) {
 
-	products, err := p.productUseCase.GetProducts()
+	// validation of paramenters
+	page := ctx.Query("page")
+	limit := ctx.Query("limit")
+
+	pageNumber, err := strconv.Atoi(page)
+
+	if err != nil {
+		responseMessage := model.Response{
+			Message: "The 'page' parameter must be a number!",
+		}
+
+		ctx.JSON(http.StatusBadRequest, responseMessage)
+	}
+
+	limitNumber, err := strconv.Atoi(limit)
+
+	if err != nil {
+		responseMessage := model.Response{
+			Message: "the 'limit' parameter must be a number",
+		}
+
+		ctx.JSON(http.StatusBadRequest, responseMessage)
+	}
+
+	products, count, err := p.productUseCase.GetProducts(pageNumber, limitNumber)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, products)
+	/* aqui eu tenho que declarar na forma de map, não basta abrir chaves!! */
+	response := model.ProductResponse{
+		Page:    page,
+		PerPage: limit,
+		Total:   count,
+		Data:    products,
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (p *ProductController) CreateProduct(ctx *gin.Context) {
@@ -48,6 +81,7 @@ func (p *ProductController) CreateProduct(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, insertedProduct)
 }
 
+// Get product by ID
 func (p *ProductController) GetProductById(ctx *gin.Context) {
 	id := ctx.Param("productId")
 	if id == "" {

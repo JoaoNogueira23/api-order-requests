@@ -12,7 +12,7 @@ func DefineOrderRoute(router *gin.Engine, orderController *controller.OrderContr
 	{
 		v1.POST("/create-section", orderController.CreateSection)
 		v1.POST("/create-order", orderController.CreateOrder)
-		v1.GET("/get-orders", orderController.GetOrders)
+		v1.GET("/get-orders/", orderController.GetOrders)
 		v1.GET("/get-orders-itens", orderController.GetOrderItems)
 	}
 }

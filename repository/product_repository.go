@@ -20,13 +20,26 @@ func NewProductRepository(connection *sql.DB) ProductRepository {
 	}
 }
 
-func (pr *ProductRepository) GetProducts() ([]model.Products, error) {
+func (pr *ProductRepository) GetProducts(page int, limit int) ([]model.Products, int, error) {
+	query := fmt.Sprintf(`
+		SELECT 
+			id_product, 
+			name, 
+			price, 
+			description, 
+			volume, 
+			isactive, 
+			ispromotion, 
+			discount,
+			url_image
+		FROM products
+		limit %d offset %d
+	`, limit, limit*page)
 
-	query := "SELECT id_product, name, price, description, volume, isactive, ispromotion, discount FROM products"
 	rows, err := pr.connection.Query(query)
 	if err != nil {
 		fmt.Println(err)
-		return []model.Products{}, err
+		return []model.Products{}, -1, err
 	}
 
 	var productList []model.Products
@@ -41,11 +54,12 @@ func (pr *ProductRepository) GetProducts() ([]model.Products, error) {
 			&productObj.Volume,
 			&productObj.Isactive,
 			&productObj.Ispromotion,
-			&productObj.Discount)
+			&productObj.Discount,
+			&productObj.UrlImage)
 
 		if err != nil {
 			fmt.Println(err)
-			return []model.Products{}, err
+			return []model.Products{}, -1, err
 		}
 
 		productList = append(productList, productObj)
@@ -53,7 +67,15 @@ func (pr *ProductRepository) GetProducts() ([]model.Products, error) {
 
 	rows.Close()
 
-	return productList, nil
+	// data total storage
+	// Executar a query
+	var count int
+	err = pr.connection.QueryRow("SELECT COUNT(*) FROM Products").Scan(&count)
+	if err != nil {
+		return []model.Products{}, -1, err
+	}
+
+	return productList, count, nil
 }
 
 func (pr *ProductRepository) CreateProduct(product model.Products) (string, error) {

@@ -9,6 +9,7 @@ type Products struct {
 	Isactive    bool    `json:"isacticve"`
 	Ispromotion bool    `json:"ispromotion"`
 	Discount    float32 `json:"discount"`
+	UrlImage    string  `json:"url_image"`
 }
 
 type ProductsRequestOrder struct {
@@ -24,4 +25,11 @@ type ProductsRequestOrder struct {
 type OrderCreateRq struct {
 	ProductsList []ProductsRequestOrder `json:"products_list"`
 	IdSection    string                 `json:"id_section"`
+}
+
+type ProductResponse struct {
+	Page    string      `json:"page"`
+	PerPage string      `json:"per_page"`
+	Total   int         `json:"total"`
+	Data    interface{} `json:"data"`
 }

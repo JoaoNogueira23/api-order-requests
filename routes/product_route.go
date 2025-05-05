@@ -13,6 +13,6 @@ func DefineProductRoute(router *gin.Engine, productController *controller.Produc
 	{
 		v1.GET("/products", productController.GetProducts)
 		v1.POST("/create-product", productController.CreateProduct)
-		v1.GET("/product/:productId", productController.GetProductById)
+		v1.GET("/product/:productId", productController.GetProductById) // get a product for id
 	}
 }

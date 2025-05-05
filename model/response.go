@@ -9,7 +9,7 @@ type OrderCreateSectionRq struct {
 	IdTable string `json:"id_table"`
 }
 
-type GetOrdersRq struct {
+type PayloadGetOrdersRq struct {
 	IdTable string `json:"id_table"`
 }
 
