@@ -19,16 +19,14 @@ func (pu *ProductUsecase) GetProducts(page int, limit int) ([]model.Products, in
 	return pu.repository.GetProducts(page, limit)
 }
 
-func (pu *ProductUsecase) CreateProduct(product model.Products) (model.Products, error) {
+func (pu *ProductUsecase) CreateProduct(products []model.Products) (string, error) {
 
-	productId, err := pu.repository.CreateProduct(product)
+	_, err := pu.repository.CreateProduct(products)
 	if err != nil {
-		return model.Products{}, err
+		return "Erro ao criar o(s) produto(s)", err
 	}
 
-	product.ID = productId
-
-	return product, nil
+	return "produto(s) criados com sucesso!", nil
 }
 
 func (pu *ProductUsecase) GetProductById(id_product string) (*model.Products, error) {

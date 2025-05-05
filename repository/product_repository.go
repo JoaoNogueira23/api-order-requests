@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/oklog/ulid/v2"
@@ -78,34 +79,47 @@ func (pr *ProductRepository) GetProducts(page int, limit int) ([]model.Products,
 	return productList, count, nil
 }
 
-func (pr *ProductRepository) CreateProduct(product model.Products) (string, error) {
-
-	var id string
-
+func (pr *ProductRepository) CreateProduct(products []model.Products) (*string, error) {
 	// variables
+	var (
+		values       []interface{}
+		placeholders []string
+	)
+
 	// Define o seed para o gerador de números aleatórios
 	entropy := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	// Gera um ULID (ordenado lexicograficamente)
-	id = ulid.MustNew(ulid.Timestamp(time.Now()), entropy).String()
+	for i, products := range products {
+		// Gera um ULID (ordenado lexicograficamente)
+		id := ulid.MustNew(ulid.Timestamp(time.Now()), entropy).String()
 
-	query, err := pr.connection.Prepare("INSERT INTO products" +
-		"(id_product,name, price, volume, description)" +
-		" VALUES ($1, $2, $3, $4, $5) RETURNING id_product")
+		start := i*5 + 1
 
-	if err != nil {
-		fmt.Println(err)
-		return "", err
+		placeholders = append(placeholders,
+			fmt.Sprintf("($%d, $%d, $%d, $%d, $%d)", start, start+1, start+2, start+3, start+4))
+
+		values = append(values,
+			id,
+			products.Name,
+			products.Price,
+			products.Volume,
+			products.Describe,
+		)
 	}
 
-	err = query.QueryRow(id, product.Name, product.Price, product.Volume, product.Describe).Scan(&id)
+	query := fmt.Sprintf(`
+		INSERT INTO products (id_product, name, price, volume, description)
+		VALUES %s`, strings.Join(placeholders, ","))
+
+	_, err := pr.connection.Exec(query, values...)
+
 	if err != nil {
-		fmt.Println(err)
-		return "", err
+		return nil, fmt.Errorf("erro ao inserir produtos: %w", err)
 	}
 
-	query.Close()
-	return id, nil
+	message := "Produto(s) criados com sucesso!"
+
+	return &message, nil
 }
 
 func (pr *ProductRepository) GetProductById(id_product string) (*model.Products, error) {

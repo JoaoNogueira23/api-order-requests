@@ -64,21 +64,21 @@ func (p *ProductController) GetProducts(ctx *gin.Context) {
 
 func (p *ProductController) CreateProduct(ctx *gin.Context) {
 
-	var product model.Products
-	err := ctx.BindJSON(&product)
+	var listProducts []model.Products
+	err := ctx.BindJSON(&listProducts)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	insertedProduct, err := p.productUseCase.CreateProduct(product)
+	message, err := p.productUseCase.CreateProduct(listProducts)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, insertedProduct)
+	ctx.JSON(http.StatusCreated, message)
 }
 
 // Get product by ID
