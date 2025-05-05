@@ -140,13 +140,11 @@ func (pr *ProductRepository) GetProductById(id_product string) (*model.Products,
 		&produto.Volume,
 		&produto.Isactive,
 		&produto.Ispromotion,
-		&produto.Discount)
+		&produto.Discount,
+		&produto.UrlImage)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
-
+		fmt.Println(err)
 		return nil, err
 	}
 
