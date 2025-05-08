@@ -29,7 +29,13 @@ func (ou *OrderUsecase) CreateSection(id_table string) (string, error) {
 
 func (ou *OrderUsecase) CreateOrder(productsList []model.ProductsRequestOrder, id_section string) (int, error) {
 	// IMPLEMENTE
-	orderId, err := ou.repository.CreateOrder(id_section)
+
+	var total_price float32
+	for _, product := range productsList {
+		total_price += float32(product.Quantity) * product.Price
+	}
+
+	orderId, err := ou.repository.CreateOrder(id_section, total_price)
 
 	if err != nil {
 		fmt.Println(err)

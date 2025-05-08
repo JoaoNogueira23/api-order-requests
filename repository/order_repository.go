@@ -53,15 +53,15 @@ func (or *OrderRepository) CreateSection(id_table string) (string, error) {
 	return id_table, nil
 }
 
-func (or *OrderRepository) CreateOrder(id_section string) (string, error) {
+func (or *OrderRepository) CreateOrder(id_section string, total_price float32) (string, error) {
 	var id string
 	location, err := time.LoadLocation("America/Sao_Paulo")
 	// Gera o datetime atual na região de São Paulo
 	now := time.Now().In(location)
 
 	query, err := or.conn.Prepare("INSERT INTO orders" +
-		"(id_order, id_section, order_time)" +
-		"VALUES ($1, $2, $3) RETURNING id_order;")
+		"(id_order, id_section, order_time, total_price)" +
+		"VALUES ($1, $2, $3, $4) RETURNING id_order;")
 
 	if err != nil {
 		fmt.Println(err)
@@ -74,7 +74,7 @@ func (or *OrderRepository) CreateOrder(id_section string) (string, error) {
 	// Gera um ULID (ordenado lexicograficamente)
 	id = ulid.MustNew(ulid.Timestamp(time.Now()), entropy).String()
 
-	err = query.QueryRow(id, id_section, now).Scan(&id)
+	err = query.QueryRow(id, id_section, now, total_price).Scan(&id)
 
 	if err != nil {
 		fmt.Println(err)
@@ -95,11 +95,13 @@ func (or *OrderRepository) CreateOrderItem(id_order string, productsList []model
 		// Gera o ULID único
 		entropy := rand.New(rand.NewSource(time.Now().UnixNano()))
 		id := ulid.MustNew(ulid.Timestamp(time.Now()), entropy).String()
+		teste := float32(product.Quantity) * product.Price
 
+		fmt.Println("total price:", teste)
 		// Adiciona os valores ao builder
 		builder.WriteString(fmt.Sprintf(
 			"('%s', '%s', '%s', %d, %.2f, %.2f)",
-			id, id_order, product.ID, product.Quantity, product.Price, product.TotalPrice,
+			id, id_order, product.ID, product.Quantity, product.Price, float32(product.Quantity)*product.Price,
 		))
 
 		// Adiciona vírgula entre valores, exceto no último item
