@@ -62,13 +62,7 @@ func (o *OrderController) CreateOrder(ctx *gin.Context) {
 }
 
 func (o *OrderController) GetOrders(ctx *gin.Context) {
-	var payload model.PayloadGetOrdersRq
-	err := ctx.BindJSON(&payload)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err)
-	}
-
-	id := payload.IdTable
+	id := ctx.Query("id_table")
 
 	if id == "" {
 		response := model.Response{
