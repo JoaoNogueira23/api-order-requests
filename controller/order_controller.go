@@ -82,15 +82,16 @@ func (o *OrderController) GetOrders(ctx *gin.Context) {
 }
 
 func (o *OrderController) GetOrderItems(ctx *gin.Context) {
-	var payload model.PayloadOrderItens
-	err := ctx.BindJSON(&payload)
+	idOrder := ctx.Query("id_order")
 
-	if err != nil {
-		fmt.Println(err)
-		ctx.JSON(http.StatusBadRequest, err)
+	if idOrder == "" {
+		response := model.Response{
+			Message: "The id of order do not null",
+		}
+		ctx.JSON(http.StatusBadRequest, response)
 	}
 
-	orderItens, err := o.orderUsecase.GetOrderItems(payload.IdOrder)
+	orderItens, err := o.orderUsecase.GetOrderItems(idOrder)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)

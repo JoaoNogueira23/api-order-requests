@@ -151,10 +151,6 @@ func (or *OrderRepository) GetOrders(id_table string) ([]model.Order, error) {
 	var ordersList []model.Order
 	var orderObj model.Order
 
-	if !rows.Next() {
-		return nil, fmt.Errorf("Section not found!")
-	}
-
 	for rows.Next() {
 		err = rows.Scan(
 			&orderObj.IdOrder,
@@ -173,14 +169,15 @@ func (or *OrderRepository) GetOrders(id_table string) ([]model.Order, error) {
 }
 
 func (or *OrderRepository) GetOrderItens(id_order string) ([]model.OrderItemRq, error) {
-	query := `SELECT
+	query := `
+		SELECT
 			SUM(total_price) as total_price,
 			SUM(quantity) as quantity,
 			PRT.name as product_name
 		FROM ORDERITEMS ORDI
 		LEFT JOIN PRODUCTS PRT
 		ON PRT.id_product = ORDI.id_product
-		WHERE id_order = $1
+		WHERE ORDI.id_order = $1
 		GROUP BY
 			ORDI.id_product,
 			PRT.name`
@@ -192,25 +189,21 @@ func (or *OrderRepository) GetOrderItens(id_order string) ([]model.OrderItemRq, 
 
 	defer rows.Close()
 
-	var ordersList []model.OrderItemRq
-	var orderObj model.OrderItemRq
-
-	if !rows.Next() {
-		return nil, fmt.Errorf("Section not found!")
-	}
+	var ordersItensList []model.OrderItemRq
+	var orderItemObj model.OrderItemRq
 
 	for rows.Next() {
 		err = rows.Scan(
-			&orderObj.Total_price,
-			&orderObj.Quantity,
-			&orderObj.ProductName)
+			&orderItemObj.Total_price,
+			&orderItemObj.Quantity,
+			&orderItemObj.ProductName)
 
 		if err != nil {
 			return nil, err
 		}
 
-		ordersList = append(ordersList, orderObj)
+		ordersItensList = append(ordersItensList, orderItemObj)
 	}
 
-	return ordersList, nil
+	return ordersItensList, nil
 }
