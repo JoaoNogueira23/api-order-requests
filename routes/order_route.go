@@ -8,7 +8,7 @@ import (
 
 func DefineOrderRoute(router *gin.Engine, orderController *controller.OrderController) {
 	v1 := router.Group("/api/orders")
-
+	/* TODO: fazer rota de fechar sessão e fazer rota para atualizar o status de pedidos */
 	{
 		v1.POST("/create-section", orderController.CreateSection)
 		v1.POST("/create-order", orderController.CreateOrder)

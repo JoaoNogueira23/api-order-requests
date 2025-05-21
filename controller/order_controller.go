@@ -3,6 +3,8 @@ package controller
 import (
 	"api-blog-go/model"
 	"api-blog-go/usecase"
+	"api-blog-go/websocket"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -54,6 +56,22 @@ func (o *OrderController) CreateOrder(ctx *gin.Context) {
 		fmt.Println(err)
 		ctx.JSON(http.StatusInternalServerError, err)
 	}
+
+	// send websocket message
+	response := map[string]any{
+		"message": fmt.Sprintf("Pedido registrado com sucesso! Foram requisitados %d produtos na seção %s", rowsEffected, payload.IdSection),
+		"data": map[string]any{
+			"id_section":     payload.IdSection,
+			"products_count": rowsEffected,
+		},
+	}
+	// Marshal the response to JSON
+	jsonBytes, err := json.Marshal(response)
+	if err != nil {
+		fmt.Println("Error on json message:", err)
+	}
+
+	websocket.Broadcast <- jsonBytes // Envia a mensagem para o canal de broadcas
 
 	ctx.JSON(http.StatusCreated, model.Response{
 		Message: fmt.Sprintf("Pedido registrado com sucesso! Foram requisitados %d produtos", &rowsEffected),
