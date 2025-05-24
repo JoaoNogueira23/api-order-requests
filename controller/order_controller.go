@@ -71,7 +71,7 @@ func (o *OrderController) CreateOrder(ctx *gin.Context) {
 		fmt.Println("Error on json message:", err)
 	}
 
-	websocket.Broadcast <- jsonBytes // Envia a mensagem para o canal de broadcas
+	websocket.Broadcast <- jsonBytes // Envia a mensagem para o canal de broadcast
 
 	ctx.JSON(http.StatusCreated, model.Response{
 		Message: fmt.Sprintf("Pedido registrado com sucesso! Foram requisitados %d produtos", &rowsEffected),

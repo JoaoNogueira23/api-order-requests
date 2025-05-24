@@ -21,7 +21,7 @@ func NewTableRepository(conn *sql.DB) TableRepository {
 }
 
 func (pr *TableRepository) GetTables() ([]model.Table, error) {
-	query := "SELECT id_table, table_number, isoccupied, location FROM tables;"
+	query := "SELECT id_table, table_number, status, location, capacity FROM tables;"
 	rows, err := pr.conn.Query(query)
 	if err != nil {
 		fmt.Println(err)
@@ -35,8 +35,9 @@ func (pr *TableRepository) GetTables() ([]model.Table, error) {
 		err = rows.Scan(
 			&tableObj.ID,
 			&tableObj.Table_number,
-			&tableObj.IsOccupied,
-			&tableObj.Location)
+			&tableObj.Status,
+			&tableObj.Location,
+			&tableObj.Capacity)
 		if err != nil {
 			fmt.Println(err)
 			return []model.Table{}, err
@@ -60,14 +61,14 @@ func (tr *TableRepository) CreateTable(table model.Table) (string, error) {
 	id = ulid.MustNew(ulid.Timestamp(time.Now()), entropy).String()
 
 	query, err := tr.conn.Prepare("INSERT INTO tables" +
-		"(id_table, table_number, location)" +
-		"VALUES ($1,$2, $3) RETURNING id_table")
+		"(id_table, table_number, location, capacity)" +
+		"VALUES ($1,$2, $3, $4) RETURNING id_table")
 	if err != nil {
 		fmt.Println(err)
 		return "", err
 	}
 
-	err = query.QueryRow(id, table.Table_number, table.Location).Scan(&id)
+	err = query.QueryRow(id, table.Table_number, table.Location, table.Capacity).Scan(&id)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
@@ -79,7 +80,7 @@ func (tr *TableRepository) CreateTable(table model.Table) (string, error) {
 }
 
 func (tr *TableRepository) GetTableById(id_table string) (*model.Table, error) {
-	query, err := tr.conn.Prepare("SELECT * FROM tables WHERE id_table = $1")
+	query, err := tr.conn.Prepare("SELECT id_table, table_number, status, location, capacity FROM tables WHERE id_table = $1")
 
 	if err != nil {
 		fmt.Println(err)
@@ -91,8 +92,9 @@ func (tr *TableRepository) GetTableById(id_table string) (*model.Table, error) {
 	err = query.QueryRow(id_table).Scan(
 		&table.ID,
 		&table.Table_number,
-		&table.IsOccupied,
-		&table.Location)
+		&table.Status,
+		&table.Location,
+		&table.Capacity)
 
 	if err != nil {
 		if err == sql.ErrNoRows {

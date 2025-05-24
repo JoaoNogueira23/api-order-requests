@@ -15,6 +15,7 @@ type Order struct {
 	IdSection string    `json:"id_section"`
 	OrderTime time.Time `json:"order_time"`
 	Status    string    `json:"status"`
+	IdTable   string    `json:"id_table"`
 }
 
 type OrderItem struct {

@@ -133,6 +133,7 @@ func (or *OrderRepository) GetOrders(id_table string) ([]model.Order, error) {
 	query := `
 		SELECT 
 			id_order, 
+			SEC.id_table,
 			ORD.id_section, 
 			order_time,
 			ORD.status
@@ -154,6 +155,7 @@ func (or *OrderRepository) GetOrders(id_table string) ([]model.Order, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&orderObj.IdOrder,
+			&orderObj.IdTable,
 			&orderObj.IdSection,
 			&orderObj.OrderTime,
 			&orderObj.Status)
