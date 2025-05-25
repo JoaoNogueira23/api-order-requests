@@ -11,11 +11,13 @@ type Section struct {
 }
 
 type Order struct {
+	OrderRank int       `json:"order_rank"`
 	IdOrder   string    `json:"id_order"`
+	IdTable   string    `json:"id_table"`
 	IdSection string    `json:"id_section"`
 	OrderTime time.Time `json:"order_time"`
 	Status    string    `json:"status"`
-	IdTable   string    `json:"id_table"`
+	Quantity  int       `json:"quantity"`
 }
 
 type OrderItem struct {

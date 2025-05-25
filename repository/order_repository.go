@@ -130,23 +130,29 @@ func (or *OrderRepository) CreateOrderItem(id_order string, productsList []model
 }
 
 func (or *OrderRepository) GetOrders(id_table string) ([]model.Order, error) {
+	fmt.Println("GetOrders called with id_table:", id_table)
 	query := `
 		SELECT 
-			id_order, 
+			RANK() OVER (ORDER BY ORD.order_time) AS order_rank,
+			ORD.id_order, 
 			SEC.id_table,
 			ORD.id_section, 
 			order_time,
-			ORD.status
+			ORD.status,
+			o.quantity
 		FROM sections SEC
 		LEFT JOIN orders ORD
 		ON SEC.id_section = ORD.id_section
+		left join orderitems o 
+		on o.id_order  = ORD.id_order 
 		WHERE SEC.id_table = $1`
 	rows, err := or.conn.Query(query, id_table)
+	fmt.Println("Executing query:", query, "with id_table:", id_table)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
-
+	fmt.Println("Query executed successfully, processing results...")
 	defer rows.Close()
 
 	var ordersList []model.Order
@@ -154,13 +160,16 @@ func (or *OrderRepository) GetOrders(id_table string) ([]model.Order, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
+			&orderObj.OrderRank,
 			&orderObj.IdOrder,
 			&orderObj.IdTable,
 			&orderObj.IdSection,
 			&orderObj.OrderTime,
-			&orderObj.Status)
+			&orderObj.Status,
+			&orderObj.Quantity)
 
 		if err != nil {
+			fmt.Printf("Error scanning row: %v\n", err)
 			return nil, err
 		}
 
