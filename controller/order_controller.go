@@ -117,3 +117,22 @@ func (o *OrderController) GetOrderItems(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, orderItens)
 }
+
+func (o *OrderController) GetOrderById(ctx *gin.Context) {
+	idOrder := ctx.Query("id_order")
+
+	if idOrder == "" {
+		response := model.Response{
+			Message: "The id of order do not null",
+		}
+		ctx.JSON(http.StatusBadRequest, response)
+	}
+
+	order, err := o.orderUsecase.GetOrderById(idOrder)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
+	}
+
+	ctx.JSON(http.StatusOK, order)
+}

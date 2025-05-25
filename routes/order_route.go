@@ -14,5 +14,6 @@ func DefineOrderRoute(router *gin.Engine, orderController *controller.OrderContr
 		v1.POST("/create-order", orderController.CreateOrder)
 		v1.GET("/get-orders/", orderController.GetOrders)
 		v1.GET("/get-orders-itens", orderController.GetOrderItems)
+		v1.GET("/get-orders-itens/:id_order", orderController.GetOrderItems)
 	}
 }
