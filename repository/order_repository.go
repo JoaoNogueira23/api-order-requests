@@ -216,8 +216,8 @@ func (or *OrderRepository) GetOrderById(id_order string) (*model.Order, error) {
 
 }
 
-func (or *OrderRepository) GetOrderItens(id_order string) ([]model.OrderItemRq, error) {
-	query := `
+func (or *OrderRepository) GetOrderItens(id_order string) (*model.OrderItemRq, error) {
+	query, err := or.conn.Prepare(`
 		SELECT
 			SUM(total_price) as total_price,
 			SUM(quantity) as quantity,
@@ -228,30 +228,28 @@ func (or *OrderRepository) GetOrderItens(id_order string) ([]model.OrderItemRq, 
 		WHERE ORDI.id_order = $1
 		GROUP BY
 			ORDI.id_product,
-			PRT.name`
-	rows, err := or.conn.Query(query, id_order)
+			PRT.name`)
+
+	if err != nil {
+		fmt.Printf("Error preparing query: %v\n", err)
+		return nil, err
+	}
+	fmt.Printf("Query successfully prepared")
+
+	var orderItemObj model.OrderItemRq
+
+	err = query.QueryRow(id_order).Scan(
+		&orderItemObj.Total_price,
+		&orderItemObj.Quantity,
+		&orderItemObj.ProductName,
+	)
+
+	fmt.Printf("Query successfully executed")
+
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
 
-	defer rows.Close()
-
-	var ordersItensList []model.OrderItemRq
-	var orderItemObj model.OrderItemRq
-
-	for rows.Next() {
-		err = rows.Scan(
-			&orderItemObj.Total_price,
-			&orderItemObj.Quantity,
-			&orderItemObj.ProductName)
-
-		if err != nil {
-			return nil, err
-		}
-
-		ordersItensList = append(ordersItensList, orderItemObj)
-	}
-
-	return ordersItensList, nil
+	return &orderItemObj, nil
 }

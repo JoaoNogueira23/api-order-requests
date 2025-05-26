@@ -26,6 +26,13 @@ func (t *TableController) GetTables(ctx *gin.Context) {
 		return
 	}
 
+	if tables == nil {
+		response := model.Response{
+			Message: "No tables found!",
+		}
+		ctx.JSON(http.StatusNoContent, response)
+	}
+
 	ctx.JSON(http.StatusOK, tables)
 }
 

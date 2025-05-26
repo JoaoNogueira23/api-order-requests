@@ -95,6 +95,13 @@ func (o *OrderController) GetOrders(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, err)
 	}
 
+	if orders == nil {
+		response := model.Response{
+			Message: "No orders found!",
+		}
+		ctx.JSON(http.StatusNoContent, response)
+	}
+
 	ctx.JSON(http.StatusOK, orders)
 
 }
@@ -115,6 +122,13 @@ func (o *OrderController) GetOrderItems(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, err)
 	}
 
+	if orderItens == nil {
+		response := model.Response{
+			Message: "No order items found!",
+		}
+		ctx.JSON(http.StatusNoContent, response)
+	}
+
 	ctx.JSON(http.StatusOK, orderItens)
 }
 
@@ -132,6 +146,13 @@ func (o *OrderController) GetOrderById(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
+	}
+
+	if order == nil {
+		response := model.Response{
+			Message: "No order found!",
+		}
+		ctx.JSON(http.StatusNotFound, response)
 	}
 
 	ctx.JSON(http.StatusOK, order)

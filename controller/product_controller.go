@@ -51,6 +51,13 @@ func (p *ProductController) GetProducts(ctx *gin.Context) {
 		return
 	}
 
+	if products == nil {
+		response := model.Response{
+			Message: "No products found!",
+		}
+		ctx.JSON(http.StatusNoContent, response)
+	}
+
 	/* aqui eu tenho que declarar na forma de map, não basta abrir chaves!! */
 	response := model.ProductResponse{
 		Page:    page,
