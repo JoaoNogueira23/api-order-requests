@@ -14,6 +14,7 @@ type Products struct {
 	Ispromotion bool           `json:"ispromotion"`
 	Discount    float32        `json:"discount"`
 	UrlImage    sql.NullString `json:"url_image"`
+	Category    string         `json:"category"`
 }
 
 type ProductsRequestOrder struct {

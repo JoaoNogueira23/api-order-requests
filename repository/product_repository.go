@@ -32,7 +32,8 @@ func (pr *ProductRepository) GetProducts(page int, limit int) ([]model.Products,
 			isactive, 
 			ispromotion, 
 			discount,
-			url_image
+			url_image,
+			category
 		FROM products
 		limit %d offset %d
 	`, limit, limit*page)
@@ -56,7 +57,8 @@ func (pr *ProductRepository) GetProducts(page int, limit int) ([]model.Products,
 			&productObj.Isactive,
 			&productObj.Ispromotion,
 			&productObj.Discount,
-			&productObj.UrlImage)
+			&productObj.UrlImage,
+			&productObj.Category)
 
 		if err != nil {
 			fmt.Println(err)
@@ -96,7 +98,7 @@ func (pr *ProductRepository) CreateProduct(products []model.Products) (*string, 
 		start := i*5 + 1
 
 		placeholders = append(placeholders,
-			fmt.Sprintf("($%d, $%d, $%d, $%d, $%d)", start, start+1, start+2, start+3, start+4))
+			fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d)", start, start+1, start+2, start+3, start+4, start+5))
 
 		values = append(values,
 			id,
@@ -104,6 +106,7 @@ func (pr *ProductRepository) CreateProduct(products []model.Products) (*string, 
 			products.Price,
 			products.Volume,
 			products.Describe,
+			products.Category,
 		)
 	}
 
