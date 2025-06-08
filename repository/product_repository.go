@@ -27,7 +27,7 @@ func (pr *ProductRepository) GetProducts(page int, limit int) ([]model.Products,
 			id_product, 
 			name, 
 			price, 
-			description, 
+			describe, 
 			volume, 
 			isactive, 
 			ispromotion, 
@@ -91,27 +91,28 @@ func (pr *ProductRepository) CreateProduct(products []model.Products) (*string, 
 	// Define o seed para o gerador de números aleatórios
 	entropy := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	for i, products := range products {
+	for i, product := range products {
 		// Gera um ULID (ordenado lexicograficamente)
 		id := ulid.MustNew(ulid.Timestamp(time.Now()), entropy).String()
 
 		start := i*5 + 1
 
 		placeholders = append(placeholders,
-			fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d)", start, start+1, start+2, start+3, start+4, start+5))
+			fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d)", start, start+1, start+2, start+3, start+4, start+5, start+6))
 
 		values = append(values,
 			id,
-			products.Name,
-			products.Price,
-			products.Volume,
-			products.Describe,
-			products.Category,
+			product.Name,
+			product.Price,
+			product.Volume,
+			product.Describe,
+			product.Category,
+			product.UrlImage,
 		)
 	}
 
 	query := fmt.Sprintf(`
-		INSERT INTO products (id_product, name, price, volume, description)
+		INSERT INTO products (id_product, name, price, volume, describe, category, url_image)
 		VALUES %s`, strings.Join(placeholders, ","))
 
 	_, err := pr.connection.Exec(query, values...)

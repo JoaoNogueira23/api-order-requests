@@ -1,20 +1,16 @@
 package model
 
-import (
-	"database/sql"
-)
-
 type Products struct {
-	ID          string         `json:"id_product"`
-	Name        string         `json:"name"`
-	Price       float32        `json:"price"`
-	Volume      float32        `json:"volume"`
-	Describe    string         `json:"description"`
-	Isactive    bool           `json:"isacticve"`
-	Ispromotion bool           `json:"ispromotion"`
-	Discount    float32        `json:"discount"`
-	UrlImage    sql.NullString `json:"url_image"`
-	Category    string         `json:"category"`
+	ID          string   `json:"id_product"`
+	Name        string   `json:"name"`
+	Price       float32  `json:"price"`
+	Volume      float32  `json:"volume"`
+	Describe    string   `json:"describe"`
+	Isactive    bool     `json:"isactive"`
+	Ispromotion bool     `json:"ispromotion"`
+	Discount    *float32 `json:"discount"`
+	UrlImage    string   `json:"url_image"`
+	Category    string   `json:"category"`
 }
 
 type ProductsRequestOrder struct {
